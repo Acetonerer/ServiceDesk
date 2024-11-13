@@ -15,16 +15,19 @@ class UserRequestViewSet(viewsets.ModelViewSet):
     queryset = UserRequest.objects.all()
     serializer_class = UserRequestSerializer
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ['status']
-    ordering_fields = ['date_create', 'status', 'operator_id']
+    filterset_fields = ["status"]
+    ordering_fields = ["date_create", "status", "operator_id"]
 
-    @swagger_auto_schema(manual_parameters=[
-        openapi.Parameter(
-            'ordering', openapi.IN_QUERY,
-            description="Поле для сортировки",
-            type=openapi.TYPE_STRING
-        ),
-    ])
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "ordering",
+                openapi.IN_QUERY,
+                description="Поле для сортировки",
+                type=openapi.TYPE_STRING,
+            ),
+        ]
+    )
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
 
@@ -33,16 +36,16 @@ class UserRequestViewSet(viewsets.ModelViewSet):
         Фильтрация и сортировка обращений по запросу
         """
         queryset = super().get_queryset()
-        status = self.request.query_params.get('status')
+        status = self.request.query_params.get("status")
         if status:
             queryset = queryset.filter(status=status)
-        ordering = self.request.query_params.get('ordering')
+        ordering = self.request.query_params.get("ordering")
         if ordering:
             queryset = queryset.order_by(ordering)
         return queryset
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 def email_webhook(request):
     """
     Обработка входящих email-сообщений через webhook
@@ -52,16 +55,15 @@ def email_webhook(request):
     messages.reverse()
 
     for message_data in messages:
-        title = message_data.get('title')
-        description = message_data.get('description')
-        user_email = message_data.get('user_email')
+        title = message_data.get("title")
+        description = message_data.get("description")
+        user_email = message_data.get("user_email")
 
         existing_request = UserRequest.objects.filter(
-            user_email=user_email,
-            status__in=["new", "in_progress"]
+            user_email=user_email, status__in=["new", "in_progress"]
         ).first()
 
-        if user_email == 'service.desk.2077@gmail.com':
+        if user_email == "service.desk.2077@gmail.com":
             continue
 
         if existing_request:
@@ -70,7 +72,7 @@ def email_webhook(request):
                 sender_id=user_email,
                 sender_type="user",
                 text=description,
-                title=title
+                title=title,
             )
         else:
             new_request = UserRequest.objects.create(
@@ -85,8 +87,7 @@ def email_webhook(request):
                 sender_id=user_email,
                 sender_type="user",
                 text=description,
-                title=title
+                title=title,
             )
 
     return Response({"status": "processed"}, status=status.HTTP_200_OK)
-

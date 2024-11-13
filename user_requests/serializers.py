@@ -9,4 +9,4 @@ class UserRequestSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserRequest
-        fields = '__all__'
+        fields = "__all__"

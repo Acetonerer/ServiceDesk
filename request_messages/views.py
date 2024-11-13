@@ -27,6 +27,7 @@ class MessageSendViewSet(viewsets.ModelViewSet):
     Класс для отправки сообщений на пользовательский email
     через API
     """
+
     serializer_class = SendUserMessageSerializer
 
     @staticmethod
@@ -38,30 +39,39 @@ class MessageSendViewSet(viewsets.ModelViewSet):
 
         user_request = OperatorAssignmentService.get_request_by_id(request_id)
         if not user_request:
-            return Response({"error": "Заявка не найдена."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Заявка не найдена."}, status=status.HTTP_404_NOT_FOUND
+            )
 
-        operator = OperatorAssignmentService.get_operator_by_id(message_data['operator_id'])
+        operator = OperatorAssignmentService.get_operator_by_id(
+            message_data["operator_id"]
+        )
         if not operator:
-            return Response({"error": "Оператор не найден."}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Оператор не найден."}, status=status.HTTP_404_NOT_FOUND
+            )
 
-        if user_request.status == 'closed':
+        if user_request.status == "closed":
             return Response(
                 {"error": "Нельзя отправлять сообщения в закрытую заявку."},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         MessageService.add_message_to_request(
             user_request=user_request,
-            sender_id=message_data['operator_id'],
-            sender_type='operator',
-            title=message_data['title'],
-            text=message_data['description'],
+            sender_id=message_data["operator_id"],
+            sender_type="operator",
+            title=message_data["title"],
+            text=message_data["description"],
         )
 
         MessageService.send_user_email(
-            title=message_data['title'],
-            description=message_data['description'],
-            recipient_mail=message_data['recipient_mail']
+            title=message_data["title"],
+            description=message_data["description"],
+            recipient_mail=message_data["recipient_mail"],
         )
 
-        return Response({"status": "Сообщение отправлено и сохранено."}, status=status.HTTP_201_CREATED)
+        return Response(
+            {"status": "Сообщение отправлено и сохранено."},
+            status=status.HTTP_201_CREATED,
+        )

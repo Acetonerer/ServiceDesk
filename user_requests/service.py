@@ -26,16 +26,21 @@ class EmailNotification:
             )
             return {"status": "success", "message": "Письмо успешно отправлено!"}
         except Exception as error:
-            return {"status": "error", "message": f"Ошибка при отправке письма: {error}"}
+            return {
+                "status": "error",
+                "message": f"Ошибка при отправке письма: {error}",
+            }
 
     def send_request_created_notification(self, user_email):
         """
         Уведомление о создании запроса
         """
         subject = "Ваше обращение получено"
-        message = (f"Здравствуйте, {user_email}!\n\nМы получили ваше обращение."
-                   f"\n\nЭто сообщение сгенерировано автоматически."
-                   f"\n\nПожалуйста, не отвечайте на него.")
+        message = (
+            f"Здравствуйте, {user_email}!\n\nМы получили ваше обращение."
+            f"\n\nЭто сообщение сгенерировано автоматически."
+            f"\n\nПожалуйста, не отвечайте на него."
+        )
         return self.send_user_email(subject, message, user_email)
 
     def send_request_in_progress_notification(self, user_email):
@@ -43,9 +48,11 @@ class EmailNotification:
         Уведомление о принятии запроса в работу
         """
         subject = "Ваше обращение принято оператором"
-        message = (f"Здравствуйте, {user_email}!\n\nВаше обращение взято в работу оператором."
-                   f"\n\nЭто сообщение сгенерировано автоматически."
-                   f"\n\nПожалуйста, не отвечайте на него.")
+        message = (
+            f"Здравствуйте, {user_email}!\n\nВаше обращение взято в работу оператором."
+            f"\n\nЭто сообщение сгенерировано автоматически."
+            f"\n\nПожалуйста, не отвечайте на него."
+        )
         return self.send_user_email(subject, message, user_email)
 
     def send_request_closed_notification(self, user_email):
@@ -53,7 +60,9 @@ class EmailNotification:
         Уведомление о закрытии запроса
         """
         subject = "Ваше обращение закрыто"
-        message = (f"Здравствуйте, {user_email}!\n\nВаше обращение успешно закрыто. Спасибо за обращение!"
-                   f"\n\nЭто сообщение сгенерировано автоматически."
-                   f"\n\nПожалуйста, не отвечайте на него.")
+        message = (
+            f"Здравствуйте, {user_email}!\n\nВаше обращение успешно закрыто. Спасибо за обращение!"
+            f"\n\nЭто сообщение сгенерировано автоматически."
+            f"\n\nПожалуйста, не отвечайте на него."
+        )
         return self.send_user_email(subject, message, user_email)

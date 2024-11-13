@@ -12,6 +12,7 @@ class SupportOperatorViewSet(viewsets.ModelViewSet):
     """
     Управление операторами
     """
+
     queryset = SupportOperator.objects.all()
     serializer_class = SupportOperatorSerializer
 
@@ -37,26 +38,39 @@ class UserRequestStatusUpdateViewSet(viewsets.ViewSet):
         """
         user_request = OperatorAssignmentService.get_request_by_id(request_id)
         if not user_request:
-            return Response({"error": "Заявка не найдена"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Заявка не найдена"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         if user_request.status != "new":
-            return Response({"error": "Заявка уже в работе или закрыта"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Заявка уже в работе или закрыта"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         operator = OperatorAssignmentService.get_operator_by_id(operator_id)
         if not operator:
-            return Response({"error": "Оператор не найден"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Оператор не найден"}, status=status.HTTP_404_NOT_FOUND
+            )
 
-        response = OperatorAssignmentService.assign_operator_to_request(user_request, operator)
-        EmailNotification().send_request_in_progress_notification(user_request.user_email)
+        response = OperatorAssignmentService.assign_operator_to_request(
+            user_request, operator
+        )
+        EmailNotification().send_request_in_progress_notification(
+            user_request.user_email
+        )
         MessageService.add_message_to_request(
             user_request,
             sender_id=operator_id,
             sender_type="operator",
             text="Ваше обращение взято в работу оператором",
-            title="Ваше обращение принято оператором"
+            title="Ваше обращение принято оператором",
         )
 
-        return Response({"status": "Заявка принята в работу"}, status=response["http_status"])
+        return Response(
+            {"status": "Заявка принята в работу"}, status=response["http_status"]
+        )
 
     @staticmethod
     def close_request(request, operator_id, request_id):
@@ -65,7 +79,9 @@ class UserRequestStatusUpdateViewSet(viewsets.ViewSet):
         """
         user_request = OperatorAssignmentService.get_request_by_id(request_id)
         if not user_request:
-            return Response({"error": "Заявка не найдена"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "Заявка не найдена"}, status=status.HTTP_404_NOT_FOUND
+            )
 
         response = OperatorAssignmentService.close_request(user_request)
         if "error" in response:
@@ -77,7 +93,7 @@ class UserRequestStatusUpdateViewSet(viewsets.ViewSet):
             sender_id=operator_id,
             sender_type="operator",
             text="Ваше обращение успешно закрыто. Спасибо за обращение!",
-            title="Ваше обращение закрыто"
+            title="Ваше обращение закрыто",
         )
 
         return Response({"status": "Заявка закрыта"}, status=response["http_status"])

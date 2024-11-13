@@ -33,13 +33,13 @@ class OperatorAssignmentService:
         Назначает оператора на заявку и меняет статус на 'in_progress'.
         """
         user_request.operator = operator
-        user_request.status = 'in_progress'
+        user_request.status = "in_progress"
         user_request.save()
         return {
             "status": "in_progress",
             "operator_id": operator.operator_id,
             "operator_name": operator.operator_name,
-            "http_status": status.HTTP_200_OK
+            "http_status": status.HTTP_200_OK,
         }
 
     @staticmethod
@@ -50,7 +50,7 @@ class OperatorAssignmentService:
         if user_request.status != "in_progress":
             return {
                 "error": "Заявка может быть закрыта только со статусом 'in_progress'.",
-                "status": status.HTTP_400_BAD_REQUEST
+                "status": status.HTTP_400_BAD_REQUEST,
             }
         user_request.status = "closed"
         user_request.save()

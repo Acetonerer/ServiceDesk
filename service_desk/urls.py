@@ -22,19 +22,23 @@ from django.contrib import admin
 from django.urls import path, include
 
 schema_view = get_schema_view(
-   openapi.Info(
-      title="ServiceDesk API",
-      default_version='v1',
-      description="API для работы с обращениями",
-   ),
-   public=True,
-   permission_classes=(permissions.AllowAny,),
+    openapi.Info(
+        title="ServiceDesk API",
+        default_version="v1",
+        description="API для работы с обращениями",
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
 )
 
 urlpatterns = [
-    path("docs/", schema_view.with_ui('swagger', cache_timeout=0), name='schema_swagger_ui'),
+    path(
+        "docs/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema_swagger_ui",
+    ),
     path("admin/", admin.site.urls),
-    path("requests/", include('user_requests.urls')),
-    path("mgs/", include('request_messages.urls')),
-    path("ops/", include('support_operator.urls')),
+    path("requests/", include("user_requests.urls")),
+    path("mgs/", include("request_messages.urls")),
+    path("ops/", include("support_operator.urls")),
 ]

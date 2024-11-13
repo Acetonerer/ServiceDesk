@@ -7,12 +7,18 @@ class MessageService:
     """
     Класс для обработки сообщений в заявках
     """
+
     @staticmethod
     def add_message_to_request(user_request, sender_id, sender_type, text, title):
         """
         Метод добавления сообщения в заявку
         """
-        max_sort = Message.objects.filter(request=user_request).aggregate(Max('sort'))['sort__max'] or 0
+        max_sort = (
+            Message.objects.filter(request=user_request).aggregate(Max("sort"))[
+                "sort__max"
+            ]
+            or 0
+        )
         sort = max_sort + 1
 
         return Message.objects.create(
