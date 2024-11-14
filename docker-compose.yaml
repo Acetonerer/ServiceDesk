@@ -25,10 +25,13 @@ services:
     container_name: backend
     env_file:
       - .env
+    volumes:
+      - ./:/code
+      - static:/code/static
     command: >
       sh -c "python manage.py migrate && gunicorn -c gunicorn.conf.py service_desk.wsgi:application"
-    ports:
-      - "8000:8000"
+    expose:
+      - '8000'
     depends_on:
       - db
     restart: always
@@ -38,6 +41,7 @@ services:
     container_name: nginx
     volumes:
       - ./nginx:/etc/nginx/conf.d
+      - static:/var/www/html/static/
     ports:
       - "81:80"
     depends_on:
@@ -46,3 +50,4 @@ services:
 
 volumes:
   pg_data:
+  static:
