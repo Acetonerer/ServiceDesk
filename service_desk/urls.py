@@ -20,6 +20,7 @@ from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from django.contrib import admin
 from django.urls import path, include
+from .template_view import home
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -41,4 +42,5 @@ urlpatterns = [
     path("requests/", include("user_requests.urls")),
     path("mgs/", include("request_messages.urls")),
     path("ops/", include("support_operator.urls")),
+    path('', home, name='home'),
 ]
