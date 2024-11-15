@@ -1,30 +1,46 @@
 import pytest
-from user_requests.models import UserRequest
-from user_requests.service import EmailNotification
+from unittest.mock import patch
+from django.conf import settings
+from django.core.mail import send_mail
+from .service import EmailNotification
 
 
 @pytest.mark.django_db
-def test_create_new_user_request():
-    """
-    Тест для создания новой заявки
-    """
-    user_request = UserRequest.objects.create(
-        title="Test Request",
-        description="This is a test request",
-        user_email="test@example.com"
+@patch("user_requests.service.send_mail")
+def test_send_user_email_success(mock_send_mail):
+
+    mock_send_mail.return_value = 1
+
+    response = EmailNotification.send_user_email(
+        subject="Test Subject",
+        message="Test Message",
+        recipient_email="test@example.com"
     )
-    assert user_request.title == "Test Request"
-    assert user_request.status == "new"
-    assert user_request.operator is None
+
+    mock_send_mail.assert_called_once_with(
+        subject="Test Subject",
+        message="Test Message",
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=["test@example.com"],
+        fail_silently=False,
+    )
+
+    assert response["status"] == "success"
+    assert response["message"] == "Письмо успешно отправлено!"
 
 
 @pytest.mark.django_db
-def test_send_creation_notification(mocker):
-    """
-    Тест на отправку уведомления при создании заявки
-    """
-    mocker.patch.object(EmailNotification, 'send_user_email', return_value={"status": "success"})
-    email_service = EmailNotification()
-    response = email_service.send_request_created_notification("test@example.com")
-    print(response)
-    assert response["status"] == "success"
+@patch("user_requests.service.send_mail")
+def test_send_user_email_failure(mock_send_mail):
+
+    mock_send_mail.side_effect = Exception("SMTP connection error")
+
+    response = EmailNotification.send_user_email(
+        subject="Test Subject",
+        message="Test Message",
+        recipient_email="test@example.com"
+    )
+
+    assert response["status"] == "error"
+    assert "Ошибка при отправке письма" in response["message"]
+    assert "SMTP connection error" in response["message"]
