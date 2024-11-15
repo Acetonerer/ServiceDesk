@@ -11,7 +11,7 @@
 - [SimpleAccess](#simpleaccess)
 - [LocalAccess](#localaccess)
 - [Тестирование](#тестирование)
-- [Команда](#команда-проекта)
+- [ProjectCommander](#ProjectCommander)
 
 ## Технологии
 - Django, DRF
@@ -185,5 +185,5 @@ pytest --cov=. --cov-report=term-missing
 ```
 Тем самым можно получить информацию о покрытии тестами всего проекта
 
-## Командир проекта
+## ProjectCommander
 Александр Болокан - backend developer
